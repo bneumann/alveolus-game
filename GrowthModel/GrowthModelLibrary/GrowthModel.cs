@@ -46,6 +46,7 @@ namespace GrowthModelLibrary
         public int MaximumBacteriaPerMacrophage         = 50;
         public int DistanceToSenseMetabolicGradient     = 30;
         public double SensitivityToFeelCytokineGradient = 1e-6;
+		public int CellDimension 						= 165;
     }
 
     public class MacrophageParameter
@@ -175,30 +176,6 @@ namespace GrowthModelLibrary
 
             macroParameter = new MacrophageParameter(ModelParameter, nummac);
         }
-
-        public void grow()
-        {
-            // Bacterial saturable growth
-            var sqdi = squareform(pdist(position)); // Calculate the distances
-            var sqce = zeros(sqdi.RowCount, sqdi.ColumnCount);
-            sqce = sqdi.Map(p => p < rad ? 1.0 : 0.0); // Find short distances
-            // FIXME: Check if equivalent to: sum(sqce, 2); -> MATLAB: if A is a matrix, then sum(A,2) is a column vector containing the sum of each row.
-            Vector<double> nearestBacteria = sqce.RowSums(); // Count the close bacteria
-            Vector<double> bacteriaToGrow = nearestBacteria.Map(p => p < Mbac ? 0 : p); // Define the growing bacteria below the threshold
-
-            if((n % growth) == 0)
-            {
-                int bacteriaGrowSum = (int)Math.Round(bacteriaToGrow.Sum());
-                for(int iter = nb; iter < nb + bacteriaGrowSum; iter++)
-                {
-                    position.SetColumn(iter, bacteriaToGrow);
-                }
-                step.SetColumn(0, bacteriaToGrow);
-                //position(nb + 1:(nb + bacteriaGrowSum),:) = position(bacteriaToGrow,:); // Bacteria divide
-                //step(nb + 1:(nb + bacteriaGrowSum), 1) = step(bacteriaToGrow, 1); // Doubling the step vector
-                nb = nb + bacteriaGrowSum; // Doubling the number of bacteria
-            }
-        }
     }       
 
     public class Infection : List<Bacteria>
@@ -239,25 +216,26 @@ namespace GrowthModelLibrary
         {
             if(mIteration % mGrowthRate == 0)
             {
-                var collection = new HashSet<Bacteria>();
-                foreach(Bacteria ba in this)
-                {
-                    var tmpCollection = new HashSet<Bacteria>();
-                    foreach (Bacteria bb in this)
-                    {
-                        // add all bacteria that are in range and not the bacteria itself
-                        if(ba.GetDistance(bb) < mSaturationRadius) // !ba.Equals(bb) 
-                        {
-                            tmpCollection.Add(ba);
-                        }
-                    }
-                    // If we don't have too many neighbours we can grow
-                    if (tmpCollection.Count < mBacteriaSaturation)
-                    {
-                        tmpCollection.ToList().ForEach(b => collection.Add(b));
-                    }
-                }
-                foreach(Bacteria b in collection)
+				// Not needed according to Guido
+                //var collection = new HashSet<Bacteria>();
+                //foreach(Bacteria ba in this)
+                //{
+                //    var tmpCollection = new HashSet<Bacteria>();
+                //    foreach (Bacteria bb in this)
+                //    {
+                //        // add all bacteria that are in range and not the bacteria itself
+                //        if(ba.GetDistance(bb) < mSaturationRadius) // !ba.Equals(bb) 
+                //        {
+                //            tmpCollection.Add(ba);
+                //        }
+                //    }
+                //    // If we don't have too many neighbours we can grow
+                //    if (tmpCollection.Count < mBacteriaSaturation)
+                //    {
+                //        tmpCollection.ToList().ForEach(b => collection.Add(b));
+                //    }
+                //}
+				foreach(Bacteria b in this.ToList())
                 {
                     this.Add(new Bacteria(mParameter) { X = b.X, Y = b.Y });
                 }
@@ -341,12 +319,13 @@ namespace GrowthModelLibrary
             FlowingState
         }
 
-        public Bacteria(ModelParameter parameter, int dimens = 165)
+        public Bacteria(ModelParameter parameter)
         {
             mParameter = parameter;
-            this.Dimension = new Dimension { Xmin = -dimens, Xmax = dimens, Ymin = -dimens, Ymax = dimens };
-            this.X = (int)(mRandom.NextDouble() * (double)(2 * dimens) - (double)dimens);
-            this.Y = (int)(mRandom.NextDouble() * (double)(2 * dimens) - (double)dimens);
+			int dimens = parameter.CellDimension;
+			this.Dimension = new Dimension { Xmin = 0, Xmax = dimens, Ymin = 0, Ymax = dimens };
+            this.X = (int)(mRandom.NextDouble() * (double)(dimens));
+            this.Y = (int)(mRandom.NextDouble() * (double)(dimens));
         }
 
         private void InterchangePhase()
