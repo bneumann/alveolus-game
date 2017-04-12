@@ -1,0 +1,16 @@
+D:\Projekte\Bacteria\GrowthModel\UnitTests\obj\Debug\UnitTests.csprojResolveAssemblyReference.cache
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\UnitTests.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\UnitTests.pdb
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\GrowthModelLibrary.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\MathNet.Numerics.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\GrowthModelLibrary.pdb
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\MathNet.Numerics.xml
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+D:\Projekte\Bacteria\GrowthModel\UnitTests\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+D:\Projekte\Bacteria\GrowthModel\UnitTests\obj\Debug\UnitTests.dll
+D:\Projekte\Bacteria\GrowthModel\UnitTests\obj\Debug\UnitTests.pdb

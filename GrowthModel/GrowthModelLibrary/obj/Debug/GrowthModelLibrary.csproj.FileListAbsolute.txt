@@ -1,0 +1,7 @@
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\obj\Debug\GrowthModelLibrary.csprojResolveAssemblyReference.cache
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\bin\Debug\GrowthModelLibrary.dll
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\bin\Debug\GrowthModelLibrary.pdb
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\bin\Debug\MathNet.Numerics.dll
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\bin\Debug\MathNet.Numerics.xml
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\obj\Debug\GrowthModelLibrary.dll
+D:\Projekte\Bacteria\GrowthModel\GrowthModelLibrary\obj\Debug\GrowthModelLibrary.pdb

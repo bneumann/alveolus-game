@@ -1,0 +1,17 @@
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\Visualizer.exe.config
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\Visualizer.exe
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\Visualizer.pdb
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.csprojResolveAssemblyReference.cache
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\MainWindow.baml
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\MainWindow.g.cs
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\App.g.cs
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer_MarkupCompile.cache
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.g.resources
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.Properties.Resources.resources
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.csproj.GenerateResource.Cache
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.exe
+D:\Projekte\Bacteria\GrowthModel\Visualizer\obj\Debug\Visualizer.pdb
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\GrowthModelLibrary.dll
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\MathNet.Numerics.dll
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\GrowthModelLibrary.pdb
+D:\Projekte\Bacteria\GrowthModel\Visualizer\bin\Debug\MathNet.Numerics.xml
