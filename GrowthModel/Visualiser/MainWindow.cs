@@ -6,7 +6,7 @@ using Gtk;
 
 public partial class MainWindow : Window
 {
-	Infection i;
+	Game game;
 	DrawingArea da;
 
 	public MainWindow() : base("Bacteria Grow")
@@ -14,13 +14,14 @@ public partial class MainWindow : Window
 		SetDefaultSize(600, 600);
 		SetPosition(WindowPosition.Center);
 		var hb = new HBox();
-		i = new Infection(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
-		da = new CairoGraphic();
+		// i = new Infection(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
+		game = new Game();
+		da = new CairoGraphic(game.worldObjects);
 		hb.Add(da);
 		Add(hb);
 		GLib.Timeout.Add(10, Update);
 		DeleteEvent += delegate { Application.Quit(); };
-		KeyPressEvent += new KeyPressEventHandler(keypress_event); 
+		KeyPressEvent += new KeyPressEventHandler(keypress_event);
 		ShowAll();
 	}
 
@@ -29,14 +30,13 @@ public partial class MainWindow : Window
 		System.Console.WriteLine("Keypress: {0}", args.Event.Key);
 		if (args.Event.Key == Gdk.Key.C)
 		{
-			i.Cough();
+			game.infection.Cough();
 		}
 	}
 
 	private bool Update()
 	{
-		i.Grow();
-		((CairoGraphic)da).UpdateList(i);
+		game.Update();
 		this.QueueDraw();
 		return true;
 	}
@@ -44,23 +44,23 @@ public partial class MainWindow : Window
 
 public class CairoGraphic : DrawingArea
 {
-	List<Bacteria> bactList = new List<Bacteria>();
+	HashSet<GameObject> bactList = new HashSet<GameObject>();
 
-	public void UpdateList(List<Bacteria> list)
+	public CairoGraphic(HashSet<GameObject> worldObjects)
 	{
-		bactList = list;
+		bactList = worldObjects;
 	}
 
-	static void DrawBacteria(Context cr, double x, double y)
+	static void DrawBacteria(Context cr, double x, double y, int radius)
 	{
 		cr.Save();
 		//cr.MoveTo(x, y);
 		cr.SetSourceColor(new Color(0, 0, 0));
-		cr.Arc(x, y, 2, 0.0, 2.0 * Math.PI);
+		cr.Arc(x, y, radius, 0.0, 2.0 * Math.PI);
 		cr.LineWidth = 1;
-      	cr.Stroke ();
+		cr.Stroke();
 		//cr.StrokePreserve();
-	    cr.Restore ();
+		cr.Restore();
 	}
 
 	protected override bool OnExposeEvent(Gdk.EventExpose args)
@@ -70,17 +70,24 @@ public class CairoGraphic : DrawingArea
 			g.Save();
 			g.SetSourceColor(new Color(1, 1, 1));
 			int width = Allocation.Width;
-          	int height = Allocation.Height;
+			int height = Allocation.Height;
 
-			g.Rectangle (0, 0, width, height);
+			g.Rectangle(0, 0, width, height);
 			g.Stroke();
-		    g.Fill ();
+			g.Fill();
 			g.Restore();
 
-			foreach (Bacteria b in bactList)
+			foreach (GameObject b in bactList)
 			{
 				//Console.WriteLine("X {0}, Y{1}", b.X, b.Y);
-				DrawBacteria(g, b.X, b.Y);
+				if (b.GetType() == typeof(Bacteria))
+				{
+					DrawBacteria(g, b.X, b.Y, 2);
+				}
+				else
+				{
+                    DrawBacteria(g, b.X, b.Y, 5);
+				}
 			}
 
 		}
