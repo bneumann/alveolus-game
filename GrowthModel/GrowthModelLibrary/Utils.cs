@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GrowthModelLibrary
 {
@@ -62,25 +63,22 @@ namespace GrowthModelLibrary
 
 	public class CollisionDetector
 	{
-		private HashSet<GameObject> mAllObjects;
+		private List<GameObject> mAllObjects;
 
-		public CollisionDetector(HashSet<GameObject> worldObjects)
+		public CollisionDetector(List<GameObject> worldObjects)
 		{
 			mAllObjects = worldObjects;
 		}
 
 		public void Update()
 		{
-			foreach (GameObject go1 in mAllObjects)
+			for (int i = 0; i < mAllObjects.Count; i++)
 			{
-				foreach (GameObject go2 in mAllObjects)
+				GameObject go1 = mAllObjects.ToArray()[i];
+				for (int j = i+1; j < mAllObjects.Count; j++)
 				{
-					if (go1 == go2)
-					{
-						continue;
-					}
-					//double dist = Math.Sqrt(Math.Pow(go1.X - go2.X, 2) + Math.Pow(go1.Y - go2.Y, 2));
-					var dist = 100;
+					GameObject go2 = mAllObjects.ToArray()[j];
+					double dist = Math.Sqrt(Math.Pow(go1.X - go2.X, 2) + Math.Pow(go1.Y - go2.Y, 2));
 					if (dist < go1.Radius)
 					{
 						go1.Collision(go2);
@@ -92,7 +90,7 @@ namespace GrowthModelLibrary
 				}
 			}
 			// Clean up
-			mAllObjects.RemoveWhere((obj) => obj.isDead);
+			mAllObjects.RemoveAll((obj) => obj.isDead);
 		}
 	}
 }

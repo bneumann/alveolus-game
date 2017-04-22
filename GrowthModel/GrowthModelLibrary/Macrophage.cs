@@ -17,7 +17,7 @@ namespace GrowthModelLibrary
 		{
 			get
 			{
-				return 10;
+				return 25;
 			}
 		}
 
@@ -30,7 +30,7 @@ namespace GrowthModelLibrary
 		}
 		public override void Update()
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		public override void Collision(GameObject otherObject)

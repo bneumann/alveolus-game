@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Cairo;
 using GrowthModelLibrary;
 using Gtk;
@@ -16,10 +17,13 @@ public partial class MainWindow : Window
 		var hb = new HBox();
 		// i = new Infection(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
 		game = new Game();
-		da = new CairoGraphic(game.worldObjects);
+		da = new CairoGraphic(game);
 		hb.Add(da);
 		Add(hb);
+		Thread gThread = new Thread(game.MainThread);
 		GLib.Timeout.Add(10, Update);
+		gThread.IsBackground = true;
+		gThread.Start();
 		DeleteEvent += delegate { Application.Quit(); };
 		KeyPressEvent += new KeyPressEventHandler(keypress_event);
 		ShowAll();
@@ -30,13 +34,13 @@ public partial class MainWindow : Window
 		System.Console.WriteLine("Keypress: {0}", args.Event.Key);
 		if (args.Event.Key == Gdk.Key.C)
 		{
-			game.infection.Cough();
+			//game.infection.Cough();
 		}
 	}
 
 	private bool Update()
 	{
-		game.Update();
+		//game.Update();
 		this.QueueDraw();
 		return true;
 	}
@@ -44,18 +48,18 @@ public partial class MainWindow : Window
 
 public class CairoGraphic : DrawingArea
 {
-	HashSet<GameObject> bactList = new HashSet<GameObject>();
+	private Game mGame;
 
-	public CairoGraphic(HashSet<GameObject> worldObjects)
+	public CairoGraphic(Game game)
 	{
-		bactList = worldObjects;
+		mGame = game;
 	}
 
-	static void DrawBacteria(Context cr, double x, double y, int radius)
+	static void DrawBacteria(Context cr, double x, double y, int radius, Color color)
 	{
 		cr.Save();
 		//cr.MoveTo(x, y);
-		cr.SetSourceColor(new Color(0, 0, 0));
+		cr.SetSourceColor(color);
 		cr.Arc(x, y, radius, 0.0, 2.0 * Math.PI);
 		cr.LineWidth = 1;
 		cr.Stroke();
@@ -76,17 +80,20 @@ public class CairoGraphic : DrawingArea
 			g.Stroke();
 			g.Fill();
 			g.Restore();
-
-			foreach (GameObject b in bactList)
+			lock(mGame.worldObjects)
 			{
-				//Console.WriteLine("X {0}, Y{1}", b.X, b.Y);
-				if (b.GetType() == typeof(Bacteria))
+				foreach (GameObject b in mGame.worldObjects)
 				{
-					DrawBacteria(g, b.X, b.Y, 2);
-				}
-				else
-				{
-                    DrawBacteria(g, b.X, b.Y, 5);
+					//Console.WriteLine("X {0}, Y{1}", b.X, b.Y);
+					if (b.GetType() == typeof(Bacteria))
+					{
+						Color color = b.isDead ? new Color(1, 0, 0) : new Color(0, 0, 0);
+						DrawBacteria(g, b.X, b.Y, 2, color);
+					}
+					else
+					{
+						DrawBacteria(g, b.X, b.Y, 5, new Color(0, 0, 0));
+					}
 				}
 			}
 

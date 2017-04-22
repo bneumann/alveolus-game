@@ -8,6 +8,7 @@ using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Distributions;
 using static GrowthModelLibrary.MatlabWrapper;
+using System.Threading;
 
 namespace GrowthModelLibrary
 {
@@ -51,30 +52,57 @@ namespace GrowthModelLibrary
 		double Mbac;                    // Maximum number of bacteria inside the region to saturate the growth (10) Assuming two hexagonal layers
 
 
-		public HashSet<GameObject> worldObjects = new HashSet<GameObject>();
-		public Infection infection;
+		public List<GameObject> worldObjects = new List<GameObject>();
+		private ModelParameter mParameter;
 		public CollisionDetector collisionDetector;
+		private int mGrowthRate = 0;
+		private int mIteration = 0;
 
 		public Game()
 		{
-			infection = new Infection(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
+			mParameter = new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1};
+			mGrowthRate = (int)Math.Round((double)(200 * mParameter.BacteriaDoublingTime));
 
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < mParameter.NumberOfMacrophages; i++)
 			{
-				var m = new Macrophage(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
+				Macrophage m = new Macrophage(mParameter);
 				worldObjects.Add(m);
+			}
+
+			for (int nb = 0; nb < mParameter.NumberOfBacteria; nb++)
+			{
+				worldObjects.Add(new Bacteria(mParameter));
 			}
 			collisionDetector = new CollisionDetector(worldObjects);
 		}
 
 		public void Update()
 		{
-			infection.Grow();
-			foreach (GameObject go in infection)
+			lock (worldObjects)
 			{
-				worldObjects.Add(go);
+				if (mIteration % mGrowthRate == 0)
+				{
+					var bactList = worldObjects.Where(wo => wo.GetType() == typeof(Bacteria)).ToArray();
+					for (int i = 0; i < bactList.Length; i++)
+					{
+						var b = bactList[i];
+						worldObjects.Add(new Bacteria(mParameter) { X = b.X, Y = b.Y });
+					}
+
+				}
+				worldObjects.ToList().ForEach(go => go.Update());
+				//collisionDetector.Update();
+				mIteration++;
 			}
-			collisionDetector.Update();
+		}
+
+		public void MainThread()
+		{
+			while (true)
+			{
+				Update();
+				Thread.Sleep(1);
+			}
 		}
 
 	}
