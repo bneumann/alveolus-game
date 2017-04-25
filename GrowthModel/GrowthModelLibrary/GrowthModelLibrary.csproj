@@ -49,6 +49,7 @@
     <Compile Include="Bacteria.cs" />
     <Compile Include="Macrophage.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="Cell.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

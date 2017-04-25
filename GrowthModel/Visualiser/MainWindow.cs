@@ -12,11 +12,11 @@ public partial class MainWindow : Window
 
 	public MainWindow() : base("Bacteria Grow")
 	{
-		SetDefaultSize(600, 600);
 		SetPosition(WindowPosition.Center);
 		var hb = new HBox();
 		// i = new Infection(new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1 });
 		game = new Game();
+		SetDefaultSize(game.Width, game.Height);
 		da = new CairoGraphic(game);
 		hb.Add(da);
 		Add(hb);

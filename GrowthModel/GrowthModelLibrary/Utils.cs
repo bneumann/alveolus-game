@@ -26,7 +26,7 @@ namespace GrowthModelLibrary
 	{
 		public int NumberOfBacteria = 1;
 		public int NumberOfMacrophages = 3;
-		public int ChemokineDiffusionCOnstant = 6000;
+		public int ChemokineDiffusionConstant = 6000;
 		public int AntigenPerBacteria = 1;
 		public double MovementInSessilePhase = 0.1f;
 		public double MovementInFlowingPhase = 3f;
@@ -39,7 +39,9 @@ namespace GrowthModelLibrary
 		public int MaximumBacteriaPerMacrophage = 50;
 		public int DistanceToSenseMetabolicGradient = 30;
 		public double SensitivityToFeelCytokineGradient = 1e-6;
-		public int CellDimension = 165;
+		public int EpithelialCellsPerRow = 11;
+		public int EpithelialCellWidth = 30;
+		public int CellDimension { get { return (EpithelialCellWidth * EpithelialCellsPerRow) / 2; } }
 	}
 
 	public class Dimension

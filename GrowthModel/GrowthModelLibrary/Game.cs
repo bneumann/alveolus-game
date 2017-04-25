@@ -55,13 +55,16 @@ namespace GrowthModelLibrary
 		public List<GameObject> worldObjects = new List<GameObject>();
 		private ModelParameter mParameter;
 		public CollisionDetector collisionDetector;
-		private int mGrowthRate = 0;
 		private int mIteration = 0;
+
+		public int Width { get { return mParameter.CellDimension; } }
+		public int Height { get { return mParameter.CellDimension; } }
 
 		public Game()
 		{
-			mParameter = new ModelParameter() { CellDimension = 600, BacteriaDoublingTime = 1};
-			mGrowthRate = (int)Math.Round((double)(200 * mParameter.BacteriaDoublingTime));
+			mParameter = new ModelParameter() { /*EpithelialCellsPerRow = 40, BacteriaDoublingTime = 1*/};
+
+			worldObjects.Add(new Cell(mParameter));
 
 			for (int i = 0; i < mParameter.NumberOfMacrophages; i++)
 			{
@@ -80,7 +83,7 @@ namespace GrowthModelLibrary
 		{
 			lock (worldObjects)
 			{
-				if (mIteration % mGrowthRate == 0)
+				if (mIteration % mParameter.BacteriaDoublingTime == 0)
 				{
 					var bactList = worldObjects.Where(wo => wo.GetType() == typeof(Bacteria)).ToArray();
 					for (int i = 0; i < bactList.Length; i++)
@@ -91,7 +94,7 @@ namespace GrowthModelLibrary
 
 				}
 				worldObjects.ToList().ForEach(go => go.Update());
-				//collisionDetector.Update();
+				collisionDetector.Update();
 				mIteration++;
 			}
 		}

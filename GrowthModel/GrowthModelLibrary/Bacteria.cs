@@ -12,11 +12,11 @@ namespace GrowthModelLibrary
 				double step = 0;
 				if (mMovementState == MovementStates.FlowingState)
 				{
-					step = 3 * mParameter.MovementInFlowingPhase;
+					step = mParameter.MovementInFlowingPhase;
 				}
 				else
 				{
-					step = 0.1 * mParameter.MovementInSessilePhase;
+					step = mParameter.MovementInSessilePhase;
 				}
 				return step;
 			}
@@ -44,10 +44,9 @@ namespace GrowthModelLibrary
 
 		private void InterchangePhase()
 		{
-			var probS = 0.999 * mParameter.ProbabilityInterchanged;
 			var randNum = mRandom.NextDouble();
 			// Change state if probability is met. This will change the step size as well
-			if (randNum > probS)
+			if (randNum > mParameter.ProbabilityInterchanged)
 			{
 				if (mMovementState == MovementStates.FlowingState)
 				{

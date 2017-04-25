@@ -1,21 +1,19 @@
 ﻿<Properties StartupConfiguration="{00488C1B-F65C-4F8C-AAEF-A00632628569}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Visualiser/Program.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="GrowthModelLibrary/Macrophage.cs">
     <Files>
-      <File FileName="GrowthModelLibrary/Game.cs" Line="88" Column="42" />
-      <File FileName="Visualiser/MainWindow.cs" Line="26" Column="1" />
-      <File FileName="../Docs/AlveolusGame.m" Line="221" Column="57" />
-      <File FileName="GrowthModelLibrary/GameObject.cs" Line="11" Column="30" />
-      <File FileName="GrowthModelLibrary/Bacteria.cs" Line="83" Column="4" />
-      <File FileName="GrowthModelLibrary/Macrophage.cs" Line="40" Column="31" />
-      <File FileName="GrowthModelLibrary/Utils.cs" Line="81" Column="48" />
+      <File FileName="GrowthModelLibrary/Game.cs" Line="97" Column="5" />
+      <File FileName="Visualiser/MainWindow.cs" Line="19" Column="41" />
+      <File FileName="../Docs/AlveolusGame.m" Line="1" Column="1" />
+      <File FileName="GrowthModelLibrary/GameObject.cs" Line="61" Column="30" />
+      <File FileName="GrowthModelLibrary/Bacteria.cs" Line="85" Column="4" />
+      <File FileName="GrowthModelLibrary/Macrophage.cs" Line="26" Column="32" />
       <File FileName="Visualiser/Program.cs" Line="13" Column="1" />
+      <File FileName="GrowthModelLibrary/Cell.cs" Line="62" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/home/benni/bacteria/GrowthModel/Visualiser/MainWindow.cs" relfile="Visualiser/MainWindow.cs" line="14" column="1" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />

@@ -108,17 +108,17 @@ while (tstep < tiempo(end) && final == 0)
     if tstep > tiempo(end)
         tstep = tiempo(end); %Cut the time to the maximum
     end
-%    tspan  = tinit:sensi:tstep; %Integration interval
-%    [t,y]  = feval(solver,@eqs,tspan,matriz,[],N,cel,pars); %Run the epithelial cell model
-%    matriz = y(end,:); %Define the initial condition as the last condition of the previous run
-%    c0     = 0; %Count the time steps
-%    %%
-%    %Join the integration steps
-%    for time = t'
-%        c          = c + 1;
-%        c0         = c0 + 1;
-%        CHE(:,:,c) = vec2mat(y(c0,1:NN),N);
-%    end
+   tspan  = tinit:sensi:tstep; %Integration interval
+   [t,y]  = feval(solver,@eqs,tspan,matriz,[],N,cel,pars); %Run the epithelial cell model
+   matriz = y(end,:); %Define the initial condition as the last condition of the previous run
+   c0     = 0; %Count the time steps
+   %%
+   %Join the integration steps
+   for time = t'
+       c          = c + 1;
+       c0         = c0 + 1;
+       CHE(:,:,c) = vec2mat(y(c0,1:NN),N);
+   end
     %%
 end
 %Create the movie
