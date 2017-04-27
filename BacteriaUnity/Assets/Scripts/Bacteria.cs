@@ -45,7 +45,7 @@ namespace Assets.Scripts
 
         private void InterchangePhase()
 		{
-            var randNum = Random.Range(0, 1);
+            var randNum = Random.Range(0F, 1F);
 			// Change state if probability is met. This will change the step size as well
 			if (randNum > mParameter.ProbabilityInterchanged)
 			{
@@ -93,9 +93,12 @@ namespace Assets.Scripts
             {
                 y = -Dimension.y;
             }
-            //Debug.Log("Dimension:" + Dimension +" x " + x + " X " + X);
-            //Debug.Log("y " + y + " Y " + Y);
-            transform.Translate(new Vector3(x, y, 0));
+			//Debug.Log("Dimension:" + Dimension +" x " + x + " X " + X);
+			//Debug.Log("y " + y + " Y " + Y);
+
+			Vector3 movement = new Vector3(x, y, 0);
+			movement *= Time.deltaTime;
+			transform.Translate(movement);
 
         }
 	}

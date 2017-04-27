@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -31,7 +29,7 @@ namespace Assets.Scripts
 		public double MovementInSessilePhase = 0.1f;
 		public double MovementInFlowingPhase = 3f;
 		public double RadialFlow = 4.2e-2;
-		public int BacteriaDoublingTime = 200;
+		public int BacteriaDoublingTime = 200; // every 3.32 hours
 		public double ProbabilityInterchanged = 0.999;
 		public int BacteriaSaturationNumber = 10;
 		public int MacrophageMovement = 2;

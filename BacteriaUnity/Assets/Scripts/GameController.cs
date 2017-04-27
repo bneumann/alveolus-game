@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -25,11 +25,11 @@ namespace Assets.Scripts
         public GameObject bacteria;
         public ModelParameter Parameter;
 
-        private List<GameObject> bactList = new List<GameObject>();
+        //private List<GameObject> bactList = new List<GameObject>();
 
 		public void Start()
 		{
-			Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 1};
+			Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 10};
 
             //worldObjects.Add(new Cell(mParameter));
 
@@ -44,31 +44,48 @@ namespace Assets.Scripts
                 var camera = Camera.main;
                 Vector3 spawnPosition = new Vector3(Random.Range(-10, 10), Random.Range(-5, 5), 0);
                 Quaternion spawnRotation = Quaternion.identity;
-                bactList.Add(Instantiate(bacteria, spawnPosition, spawnRotation));
-				//worldObjects.Add(new Bacteria(mParameter));
+                Instantiate(bacteria, spawnPosition, spawnRotation);
 			}
+
+			StartCoroutine(DoubleBacteria());
 		}
 
 		public void Update()
 		{
-            //TODO: Use methods shown in: https://www.youtube.com/watch?v=r8N6J79W0go
-            if (mIteration % (Parameter.BacteriaDoublingTime) == 0)
-            {
-                //	var bactList = worldObjects.Where(wo => wo.GetType() == typeof(Bacteria)).ToArray();
-                var tmpList = new List<GameObject>();
-                for (int i = 0; i < bactList.Count; i++)
-                {
-                    var b = bactList[i];
-                    //		//worldObjects.Add(new Bacteria(mParameter) { X = b.X, Y = b.Y });
-                    Vector3 spawnPosition = new Vector3(b.transform.position.x, b.transform.position.y);
-                    Quaternion spawnRotation = Quaternion.identity;
-                    tmpList.Add(Instantiate(bacteria, spawnPosition, spawnRotation));
-                }
-                bactList.AddRange(tmpList);
+			////TODO: Use methods shown in: https://www.youtube.com/watch?v=r8N6J79W0go
+			//if (mIteration % (Parameter.BacteriaDoublingTime) == 0)
+			//{
+			//    //	var bactList = worldObjects.Where(wo => wo.GetType() == typeof(Bacteria)).ToArray();
+			//    var tmpList = new List<GameObject>();
+			//    for (int i = 0; i < bactList.Count; i++)
+			//    {
+			//        var b = bactList[i];
+			//        //		//worldObjects.Add(new Bacteria(mParameter) { X = b.X, Y = b.Y });
+			//        Vector3 spawnPosition = new Vector3(b.transform.position.x, b.transform.position.y);
+			//        Quaternion spawnRotation = Quaternion.identity;
+			//        tmpList.Add(Instantiate(bacteria, spawnPosition, spawnRotation));
+			//    }
+			//    bactList.AddRange(tmpList);
 
-            }
-            mIteration++;
+			//}
+			//mIteration++;
         }
+
+		IEnumerator DoubleBacteria()
+		{
+			while (true)
+			{
+				Bacteria[] bactList = FindObjectsOfType(typeof(Bacteria)) as Bacteria[];
+				for (int i = 0; i < bactList.Length; i++)
+				{
+					var b = bactList[i];
+					Vector3 spawnPosition = new Vector3(b.transform.position.x, b.transform.position.y);
+					Quaternion spawnRotation = Quaternion.identity;
+					Instantiate(bacteria, spawnPosition, spawnRotation);
+				}
+				yield return new WaitForSeconds(Parameter.BacteriaDoublingTime);
+			}
+		}
 
 	}
 
