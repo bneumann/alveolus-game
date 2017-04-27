@@ -26,17 +26,17 @@ namespace Assets.Scripts
 		public int NumberOfMacrophages = 3;
 		public int ChemokineDiffusionConstant = 6000;
 		public int AntigenPerBacteria = 1;
-		public double MovementInSessilePhase = 0.1f;
-		public double MovementInFlowingPhase = 3f;
+		public float MovementInSessilePhase = 0.1f;
+		public float MovementInFlowingPhase = 3f;
 		public double RadialFlow = 4.2e-2;
 		public int BacteriaDoublingTime = 200; // every 3.32 hours
-		public double ProbabilityInterchanged = 0.999;
+		public float ProbabilityInterchanged = 0.999F;
 		public int BacteriaSaturationNumber = 10;
 		public int MacrophageMovement = 2;
-		public double PhagocytosysRate = 0.048;
+		public float PhagocytosysRate = 0.048F;
 		public int MaximumBacteriaPerMacrophage = 50;
 		public int DistanceToSenseMetabolicGradient = 30;
-		public double SensitivityToFeelCytokineGradient = 1e-6;
+		public float SensitivityToFeelCytokineGradient = 1e-6F;
 		public int EpithelialCellsPerRow = 11;
 		public int EpithelialCellWidth = 30;
 		public int CellDimension { get { return (EpithelialCellWidth * EpithelialCellsPerRow) / 2; } }

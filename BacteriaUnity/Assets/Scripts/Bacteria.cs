@@ -1,4 +1,5 @@
 ﻿//using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -9,14 +10,16 @@ namespace Assets.Scripts
         private ModelParameter mParameter;
         private Vector3 Dimension;
 
+        private float mCurrentAngle = 0;
+
         public float X { get { return transform.position.x; } }
         public float Y { get { return transform.position.y; } }
 
-        public double StepSize
+        public float StepSize
 		{
 			get
 			{
-				double step = 0;
+                float step = 0;
 				if (mMovementState == MovementStates.FlowingState)
 				{
 					step = mParameter.MovementInFlowingPhase;
@@ -41,6 +44,22 @@ namespace Assets.Scripts
             GameController gc = GameObject.Find("GameController").GetComponent<GameController>();
             mParameter = gc.Parameter;
             Dimension = new Vector3(gc.Width, gc.Height);
+
+            StartCoroutine(NewHeadingCoroutine());
+        }
+
+        private void SetNewHeading()
+        {
+            mCurrentAngle = Random.Range(0F, 1F) * 2 * Mathf.PI; // Random direction
+        }
+
+        private IEnumerator NewHeadingCoroutine()
+        {
+            while (true)
+            {
+                SetNewHeading();
+                yield return new WaitForSeconds(0.1F);
+            }
         }
 
         private void InterchangePhase()
@@ -59,47 +78,40 @@ namespace Assets.Scripts
 				}
 			}
 		}
-
-		//public override string ToString()
-		//{
-		//	return String.Format("Bacteria at {0}|{1} in {2}\n", X, Y, Enum.GetName(typeof(MovementStates), mMovementState));
-		//}
-
-
 		/// <summary>
 		/// Moves the bacteria. It will jump to mobile phase with a certain propability
 		/// </summary>
 		public void Update()
 		{
 			InterchangePhase();
-			InterchangePhase();
-			var angl = Random.Range(0F, 1F) * 2 * System.Math.PI; // Random direction
+			InterchangePhase();			
             
-			var x = (float)(System.Math.Cos(angl) * StepSize);
-			var y = (float)(System.Math.Sin(angl) * StepSize); // Step into the direction defined
-            if (x > Dimension.x)
-            {
-                x = Dimension.x;
-            }
-            if (x < -Dimension.x)
-            {
-                x = -Dimension.x;
-            }
-            if (y > Dimension.y)
-            {
-                y = Dimension.y;
-            }
-            if (y < -Dimension.y)
-            {
-                y = -Dimension.y;
-            }
-			//Debug.Log("Dimension:" + Dimension +" x " + x + " X " + X);
-			//Debug.Log("y " + y + " Y " + Y);
+			var x = (float)(Mathf.Cos(mCurrentAngle) * StepSize);
+			var y = (float)(Mathf.Sin(mCurrentAngle) * StepSize); // Step into the direction defined
 
-			Vector3 movement = new Vector3(x, y, 0);
-			movement *= Time.deltaTime;
+            // Check this: http://answers.unity3d.com/questions/501893/calculating-2d-camera-bounds.html
+
+            float dist = (transform.position - Camera.main.transform.position).z;
+            float leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
+            float rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
+            float bottomBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
+            float topBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
+
+            if (X > Dimension.x || X < -Dimension.x)
+            {
+                x = X > 0 ? -x : x;
+             }
+            if (Y > Dimension.y || Y < -Dimension.y)
+            {
+                y = Y > 0 ? -y : y;
+             }
+            // Apply and smooth out movement
+            Vector3 movement = new Vector3(x, y, 0);
+            var newX = Mathf.Clamp(movement.x + transform.position.x, leftBorder, rightBorder);
+            var newY = Mathf.Clamp(movement.y + transform.position.y, topBoarder, bottomBoarder);
+            movement *= Time.deltaTime;
 			transform.Translate(movement);
-
+            //transform.rotation = Quaternion.AngleAxis(mCurrentAngle * Mathf.Rad2Deg, Vector3.forward);
         }
 	}
 }
