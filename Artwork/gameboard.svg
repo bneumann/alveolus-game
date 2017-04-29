@@ -551,11 +551,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.24748737"
-     inkscape:cx="858.90489"
-     inkscape:cy="-420.04087"
+     inkscape:zoom="0.35"
+     inkscape:cx="1137.3314"
+     inkscape:cy="553.65093"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer2"
      showgrid="true"
      units="px"
      inkscape:window-width="1920"
@@ -579,7 +579,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -599,7 +599,10 @@
        inkscape:tile-y0="-89.999997">
       <g
          id="g10977"
-         transform="matrix(0.54982915,0,0,0.54982915,176.06246,-102.9863)">
+         transform="matrix(0.54982915,0,0,0.54982915,176.06246,-102.9863)"
+         inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\cell.png"
+         inkscape:export-xdpi="78.709999"
+         inkscape:export-ydpi="78.709999">
         <path
            inkscape:transform-center-y="1.5155162"
            inkscape:transform-center-x="-0.50482862"

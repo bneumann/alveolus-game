@@ -10,6 +10,9 @@ namespace Assets.Scripts
         private ModelParameter mParameter;
         private Vector3 Dimension;
 
+        // Individual bacteria are between 0.5 and 1.25 micrometers in diameter. From: https://microbewiki.kenyon.edu/index.php/Streptococcus_pneumoniae
+        // So we take 1 roughly as guideline
+
         private float mCurrentAngle = 0;
 
         public float X { get { return transform.position.x; } }
@@ -91,11 +94,11 @@ namespace Assets.Scripts
 
             // Check this: http://answers.unity3d.com/questions/501893/calculating-2d-camera-bounds.html
 
-            float dist = (transform.position - Camera.main.transform.position).z;
-            float leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
-            float rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
-            float bottomBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
-            float topBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
+            //float dist = (transform.position - Camera.main.transform.position).z;
+            //float leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
+            //float rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
+            //float bottomBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
+            //float topBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
 
             if (X > Dimension.x || X < -Dimension.x)
             {
@@ -107,8 +110,8 @@ namespace Assets.Scripts
              }
             // Apply and smooth out movement
             Vector3 movement = new Vector3(x, y, 0);
-            var newX = Mathf.Clamp(movement.x + transform.position.x, leftBorder, rightBorder);
-            var newY = Mathf.Clamp(movement.y + transform.position.y, topBoarder, bottomBoarder);
+            //var newX = Mathf.Clamp(movement.x + transform.position.x, leftBorder, rightBorder);
+            //var newY = Mathf.Clamp(movement.y + transform.position.y, topBoarder, bottomBoarder);
             movement *= Time.deltaTime;
 			transform.Translate(movement);
             //transform.rotation = Quaternion.AngleAxis(mCurrentAngle * Mathf.Rad2Deg, Vector3.forward);

@@ -38,7 +38,8 @@ namespace Assets.Scripts
 		public int DistanceToSenseMetabolicGradient = 30;
 		public float SensitivityToFeelCytokineGradient = 1e-6F;
 		public int EpithelialCellsPerRow = 11;
-		public int EpithelialCellWidth = 30;
+        public int EpithelialCellsPerColumn = 9;
+        public int EpithelialCellWidth = 30;
 		public int CellDimension { get { return (EpithelialCellWidth * EpithelialCellsPerRow) / 2; } }
 	
 	}
