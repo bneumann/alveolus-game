@@ -110,7 +110,10 @@ while (tstep < tiempo(end) && final == 0)
     end
    tspan  = tinit:sensi:tstep; %Integration interval
    [t,y]  = feval(solver,@eqs,tspan,matriz,[],N,cel,pars); %Run the epithelial cell model
+%   [t,y]  = ode45(@eqs, tspan, matriz,[],N,cel,pars);
    matriz = y(end,:); %Define the initial condition as the last condition of the previous run
+   csvwrite(sprintf('matriz_%d.csv', n), vec2mat(matriz,11));
+   csvwrite(sprintf('bac_%d.csv', n), matBac);
    c0     = 0; %Count the time steps
    %%
    %Join the integration steps
@@ -119,6 +122,7 @@ while (tstep < tiempo(end) && final == 0)
        c0         = c0 + 1;
        CHE(:,:,c) = vec2mat(y(c0,1:NN),N);
    end
+%   csvwrite(sprintf('che_%d.csv', n), CHE);
     %%
 end
 %Create the movie
@@ -128,7 +132,7 @@ end
 %%
 end
 %Epithelial cell model
-function dfx = eqs(~,x,N,cel,pars)
+function dfx = eqs(~,x, ~,N,cel,pars)
 global contador matBac
 contador = contador + 1; %Count the iterations
 %Parameters
@@ -256,11 +260,12 @@ if n == 0
             hold on %Overlap graph
 %            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r',...
 %                'MarkerFaceAlpha',.1,'MarkerEdgeAlpha',0) %Plot the bacteria with transparency
-            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r') %Plot the bacteria with transparency
+%            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r') %Plot the bacteria with transparency
+            plot(pos(:,1),pos(:,2),'.r','MarkerSize',20) %Plot the bacteria
             plot(mac(:,1),mac(:,2),'.c','MarkerSize',50) %Plot the macrophages
             hold off %Stop overlaping
             for m = 1:nummac
-                text(mac(m,1),mac(m,2),num2str(eaten(m)),'HorizontalAlignment','center','FontSize',5); %Display the number of attached bacteria
+                text(mac(m,1),mac(m,2),num2str(eaten(m)),'HorizontalAlignment','center','FontSize',10); %Display the number of attached bacteria
             end
             xlim(limits) %Define the x axis limits
             ylim(limits) %Define the y axis limits
@@ -318,7 +323,7 @@ while (nb > 0 && nb < maxbac && n < nstop && nummac > 0)
             hold on %Overlap graph
 %            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r',...
 %                'MarkerFaceAlpha',.1,'MarkerEdgeAlpha',0) %Plot the bacteria with transparency
-            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r') %Plot the bacteria with transparency
+%            scatter(pos(:,1),pos(:,2),12,'MarkerFaceColor','r','MarkerEdgeColor','r') %Plot the bacteria with transparency
             plot(mac(:,1),mac(:,2),'.c','MarkerSize',50) %Plot the macrophages
             hold off %Stop overlaping
             for m = 1:nummac
@@ -360,14 +365,14 @@ while (nb > 0 && nb < maxbac && n < nstop && nummac > 0)
     nbP = nb; %Save the previous iteration
     %%
     %Bacterial saturable growth
-    sqdi             = squareform(pdist(pos)); %Calculate the distances
-    sqce             = sqdi*0; %Temporal variable
-    sqce(sqdi < rad) = 1; %Find short distances
-    cerca            = sum(sqce,2); %Count the close bacteria
-    crecen           = (cerca < Mbac); %Define the growing bacteria below the threshold
-    if isempty(crecen)
-        crecen = 1; %If it's empty give one value
-    end
+%    sqdi             = squareform(pdist(pos)); %Calculate the distances
+%    sqce             = sqdi*0; %Temporal variable
+%    sqce(sqdi < rad) = 1; %Find short distances
+%    cerca            = sum(sqce,2); %Count the close bacteria
+%    crecen           = (cerca < Mbac); %Define the growing bacteria below the threshold
+%    if isempty(crecen)
+        crecen = nb; %If it's empty give one value
+%    end
     if mod(n,growth) == 0
         pos(nb + 1:(nb + sum(crecen)),:)  = pos(crecen,:); %Bacteria divide
         step(nb + 1:(nb + sum(crecen)),1) = step(crecen,1); %Doubling the step vector
@@ -457,6 +462,7 @@ while (nb > 0 && nb < maxbac && n < nstop && nummac > 0)
     step(fuera)  = []; %Remove steps
     nb           = nb - sum(fuera); %Substract bacteria from the count
     %%
+    mac
     %Count the bacteria per epithelial cell
     matBac = zeros(Nc,Nc); %Define the bacteria matrix
     for f = 1:Nc

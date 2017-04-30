@@ -3,12 +3,14 @@ using System.Linq;
 using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using Assets.Scripts;
+using System.Collections.Generic;
 
 public class Alveolus : MonoBehaviour
 {
     private ModelParameter mParameter;
 
     private Matrix<double> CellMatrix;
+    private Vector<double> mCurrentCheConcentration;
 
     // Object used for generating the tile map
     public GameObject cell;
@@ -43,7 +45,11 @@ public class Alveolus : MonoBehaviour
 
     //2D array to hold all tiles, which makes it easier to reference adjacent tiles etc.
     public GameObject[,] map;
+
     private Matrix<double> mBactCountMatrix;
+    private List<Matrix<double>> mChemokine;
+
+    private float mTimeStep = 0F;
 
     public int MacrophageCount;
 
@@ -60,6 +66,8 @@ public class Alveolus : MonoBehaviour
         mParameter.EpithelialCellsPerColumn = cellVerticalCount;
 
         CellMatrix = Matrix<double>.Build.Dense(mParameter.EpithelialCellsPerRow, mParameter.EpithelialCellsPerColumn, 0);
+        mCurrentCheConcentration = Vector<double>.Build.Dense(mParameter.EpithelialCellsPerRow * mParameter.EpithelialCellsPerColumn, 0);
+        mChemokine = new List<Matrix<double>>();
 
         //TODO: Also move to Alveolus class
         //Initialize our 2D Transform array with the width and height
@@ -82,29 +90,44 @@ public class Alveolus : MonoBehaviour
             }
         }
 
-        mBactCountMatrix = Matrix<float>.Build.Dense(map.GetLength(0), map.GetLength(1));
+        mBactCountMatrix = Matrix<double>.Build.Dense(mParameter.EpithelialCellsPerRow, mParameter.EpithelialCellsPerColumn);
 
         StartCoroutine(CalculateChemokine());
     }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+    }
 
     IEnumerator CalculateChemokine()
     {
         while (true)
         {
-            var ret = SetEquations();
-            SolveEquations(ret);
-            yield return new WaitForSeconds(mParameter.BacteriaDoublingTime);
+            //var ret = SetEquations();
+            mCurrentCheConcentration = SolveEquations(mCurrentCheConcentration);
+            Debug.Log(mCurrentCheConcentration);
+            // Time for bacteria doubling is 200 Minutes while the Chemokine is recalculated every 5 minues. 
+            // So the ration is 0.025 which we can deduct from the doubling time.
+            yield return new WaitForSeconds(mParameter.BacteriaDoublingTime * 0.025F);
         }
     }
 
-    private void SolveEquations(Vector<double> initials)
+    private Vector<double> SolveEquations(Vector<double> initials)
     {
-        var ret = MathNet.Numerics.OdeSolvers.RungeKutta.SecondOrder(initials, 0, 100, initials.Count, null);
+        // Integrating over max of 10 hours. Step is 5 minutes
+        // That means a integration step is 0.083. The Simulation uses the numbers of cells in a row as number for iterations
+        // https://github.com/mathnet/mathnet-numerics/blob/master/src/UnitTests/OdeSolvers/OdeSolverTest.cs
+        double start = mTimeStep;
+        double stop = mTimeStep += mParameter.SychronisationTime / 60F;
+        var ret = MathNet.Numerics.OdeSolvers.RungeKutta.FourthOrder(initials, start, stop, mParameter.EpithelialCellsPerRow, SetEquations);
+
+        // Remark: This is part of the original code. But the list is never used. Macrophage movement only considers the current CHE concentration
+        //foreach (Vector<double> v in ret)
+        //{
+        //    mChemokine.Add(VectorToMatrix(v, mParameter.EpithelialCellsPerColumn));
+        //}
+        initials = ret[ret.Length - 1];
+        return initials;
     }
 
     //%Spatial model
@@ -120,35 +143,60 @@ public class Alveolus : MonoBehaviour
     //%%
     //dxX = k1.* matBac.*pars(4) - k2.* X1.^2 + dI;
     //dfx = dxX(:); %Me ge equations
-    private Vector<double> SetEquations()
+    private Vector<double> SetEquations(double tspan, Vector<double> initials)
     {
+        initials.Map(x => x < 1e-6 ? 0 : x);
         int rows = mParameter.EpithelialCellsPerRow;
         int cols = mParameter.EpithelialCellsPerColumn;
+        var X1 = VectorToMatrix(initials, cols).Transpose();
+        rows = mParameter.EpithelialCellsPerColumn;
+        cols = mParameter.EpithelialCellsPerRow;
+
         //1. Fluxes in x-direction; zero fluxes near boundaries
         var zero = Matrix<double>.Build.Dense(1, cols, 0);
-        var diff = CellMatrix.SubMatrix(1, rows - 1, 0, CellMatrix.ColumnCount) - CellMatrix.SubMatrix(0, rows - 1, 0, CellMatrix.ColumnCount);
+        var diff = X1.SubMatrix(1, rows - 1, 0, X1.ColumnCount) - X1.SubMatrix(0, rows - 1, 0, X1.ColumnCount);
         var FI = zero.Stack(diff);
         FI = -Di * FI.Stack(zero) / CellLayerThickness;
         // Add flux gradient to rate of change
-        var dI = FI.SubMatrix(1, rows, 0, FI.ColumnCount) - FI.SubMatrix(0, rows, 0, FI.ColumnCount) / CellLayerThickness;
+        var dI = (FI.SubMatrix(1, rows, 0, FI.ColumnCount) - FI.SubMatrix(0, rows, 0, FI.ColumnCount)) / CellLayerThickness;
         //2. Fluxes in y-direction; zero fluxes near boundaries
         zero = Matrix<double>.Build.Dense(rows, 1, 0);
-        diff = CellMatrix.SubMatrix(0, CellMatrix.RowCount, 1, cols - 1) - CellMatrix.SubMatrix(0, CellMatrix.RowCount, 0, cols - 1);
+        diff = X1.SubMatrix(0, X1.RowCount, 1, cols - 1) - X1.SubMatrix(0, X1.RowCount, 0, cols - 1);
         FI = zero.Append(diff);
         FI = -Di * FI.Append(zero) / CellLayerThickness;
         // Add flux gradient to rate of change
         //  dI = -dI - (FI(:, 2:N + 1) - FI(:, 1:N))./ dx;
         dI = -dI - (FI.SubMatrix(0, FI.RowCount, 1, cols) - FI.SubMatrix(0, FI.RowCount, 0, cols)) / CellLayerThickness;
-        //FIXME: Macrophagecount should be the cellmatrix containing numbers of bacteria attached
-        var dxX = k1 * BactCount * mParameter.AntigenPerBacteria - k2 * CellMatrix.PointwiseMultiply(CellMatrix) + dI;
+        var dxX = k1 * BactCount.Transpose() * mParameter.AntigenPerBacteria - k2 * X1.PointwiseMultiply(X1) + dI;
         //Debug.Log(FI);
         //Debug.Log(dI);
-        Debug.Log(dxX);
+        //Debug.Log(dxX);
 
-        var ret = Vector<double>.Build.Dense(rows * cols, 1);
+        var ret = Vector<double>.Build.Dense(rows * cols);
         for(int i = 0; i < dxX.ColumnCount; i++)
         {
             ret.SetSubVector(i * rows, rows, dxX.Column(i));
+        }
+
+        return ret;
+    }
+
+    private Matrix<double> VectorToMatrix(Vector<double> vector, int columns)
+    {
+        var rem = vector.Count % columns;
+        var padding = columns - rem;
+        var rows = Mathf.FloorToInt(vector.Count / columns);
+        // If the last row is incomplete we will pad it with zeros
+        rows += rem > 0 ? 1 : 0;
+        Matrix<double> ret = Matrix<double>.Build.Dense(rows, columns);
+        int count = 0;
+        for(int row = 0; row < ret.RowCount; row++)
+        {
+            for(int col = 0; col < ret.ColumnCount; col++)
+            {
+                ret[row, col] = count < vector.Count ? vector[count] : 0;
+                count++;
+            }
         }
         return ret;
     }

@@ -29,7 +29,7 @@ namespace Assets.Scripts
 		public float MovementInSessilePhase = 0.1f;
 		public float MovementInFlowingPhase = 3f;
 		public double RadialFlow = 4.2e-2;
-		public int BacteriaDoublingTime = 200; // every 3.32 hours
+		public float BacteriaDoublingTime = 200F; // every 3.32 hours
 		public float ProbabilityInterchanged = 0.999F;
 		public int BacteriaSaturationNumber = 10;
 		public int MacrophageMovement = 2;
@@ -40,7 +40,8 @@ namespace Assets.Scripts
 		public int EpithelialCellsPerRow = 11;
         public int EpithelialCellsPerColumn = 9;
         public int EpithelialCellWidth = 30;
-		public int CellDimension { get { return (EpithelialCellWidth * EpithelialCellsPerRow) / 2; } }
+        public float SychronisationTime = 5; // Interval of time between synchronization of models in minutes aka integration step time
+        public int CellDimension { get { return (EpithelialCellWidth * EpithelialCellsPerRow) / 2; } }
 	
 	}
 }

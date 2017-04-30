@@ -17,11 +17,14 @@ namespace Assets.Scripts
 
         public GameObject bacteria;
         public GameObject alveolus;
-        public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 10 };
+        public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 10, NumberOfBacteria = 100 };
 
+        public int NumberOfBacteria;
 
         public void Start()
 		{
+            Parameter.NumberOfBacteria = NumberOfBacteria;
+
             Instantiate(alveolus);
 
             //for (int i = 0; i < mParameter.NumberOfMacrophages; i++)
@@ -32,7 +35,9 @@ namespace Assets.Scripts
 
             for (int nb = 0; nb < Parameter.NumberOfBacteria; nb++)
 			{
-                Vector3 spawnPosition = new Vector3(Random.Range(-Width, Width), Random.Range(-Height, Height), 0);
+                var x = SampleGaussian(0, Width / 4);
+                var y = SampleGaussian(0, Height / 4);
+                Vector3 spawnPosition = new Vector3(x, y, 0);
                 Quaternion spawnRotation = Quaternion.identity;                
                 GameObject bact = Instantiate(bacteria, spawnPosition, spawnRotation);
                 bact.transform.parent = GameObject.FindGameObjectWithTag("Bacterias").transform;
@@ -69,6 +74,17 @@ namespace Assets.Scripts
 				yield return new WaitForSeconds(Parameter.BacteriaDoublingTime);
 			}
 		}
+
+        private static float SampleGaussian(float mean, float stddev)
+        {
+            // The method requires sampling from a uniform random of (0,1]
+            // but Random.NextDouble() returns a sample of [0,1).
+            float x1 = 1 - Random.Range(0F, 1F);
+            float x2 = 1 - Random.Range(0F, 1F);
+
+            float y1 = Mathf.Sqrt(-2.0F * Mathf.Log(x1)) * Mathf.Cos(2.0F * Mathf.PI * x2);
+            return y1 * stddev + mean;
+        }
 
     }
 
