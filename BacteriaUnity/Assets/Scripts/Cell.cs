@@ -8,12 +8,15 @@ namespace Assets.Scripts
     {
         private ModelParameter mParameter;
         private GameController mGameController;
+        private ParticleSystem mChemokineEmitter;
         public int BacteriaOnCell;
         // Cell width is mParameter.EpithelialCellWidth (30)
 
         public void Start()
         {
             mGameController = GameObject.Find("GameController").GetComponent<GameController>();
+            mChemokineEmitter = GetComponent<ParticleSystem>();
+
             mParameter = mGameController.Parameter;
         }
 
@@ -36,13 +39,17 @@ namespace Assets.Scripts
         {
         }
 
-        //public int BacteriaOnCell
-        //{
-        //    get
-        //    {
-        //        return mGameController.Bacterias.Count(b => Vector3.Distance(transform.position, b.transform.position) < 1.1F); // mParameter.EpithelialCellWidth);
-        //    }
-        //}
-
+        public float Chemokine
+        {
+            set
+            {
+                var input = Mathf.Clamp01(value * 1e3F);
+                if(mChemokineEmitter)
+                {
+                    var m = mChemokineEmitter.main;
+                    m.maxParticles = (int)input*1000;
+                }
+            }
+        }
     }
 }

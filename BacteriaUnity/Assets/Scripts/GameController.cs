@@ -17,7 +17,7 @@ namespace Assets.Scripts
 
         public GameObject bacteria;
         public GameObject alveolus;
-        public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 10, NumberOfBacteria = 100 };
+        public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 20, NumberOfBacteria = 100 };
 
         public int NumberOfBacteria;
 
