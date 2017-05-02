@@ -92,29 +92,21 @@ namespace Assets.Scripts
 			var x = (float)(Mathf.Cos(mCurrentAngle) * StepSize);
 			var y = (float)(Mathf.Sin(mCurrentAngle) * StepSize); // Step into the direction defined
 
-            // Check this: http://answers.unity3d.com/questions/501893/calculating-2d-camera-bounds.html
+            PlayerMovementClamping();
 
-            //float dist = (transform.position - Camera.main.transform.position).z;
-            //float leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).x;
-            //float rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, dist)).x;
-            //float bottomBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, dist)).y;
-            //float topBoarder = Camera.main.ViewportToWorldPoint(new Vector3(0, 1, dist)).y;
-
-            if (X > Dimension.x || X < -Dimension.x)
-            {
-                x = X > 0 ? -x : x;
-             }
-            if (Y > Dimension.y || Y < -Dimension.y)
-            {
-                y = Y > 0 ? -y : y;
-             }
             // Apply and smooth out movement
             Vector3 movement = new Vector3(x, y, 0);
-            //var newX = Mathf.Clamp(movement.x + transform.position.x, leftBorder, rightBorder);
-            //var newY = Mathf.Clamp(movement.y + transform.position.y, topBoarder, bottomBoarder);
             movement *= Time.deltaTime;
 			transform.Translate(movement);
-            //transform.rotation = Quaternion.AngleAxis(mCurrentAngle * Mathf.Rad2Deg, Vector3.forward);
         }
-	}
+
+        void PlayerMovementClamping()
+        {
+            var viewpointCoord = Camera.main.WorldToViewportPoint(transform.position);
+            viewpointCoord.x = Mathf.Clamp01(viewpointCoord.x);
+            viewpointCoord.y = Mathf.Clamp01(viewpointCoord.y);
+            transform.position = Camera.main.ViewportToWorldPoint(viewpointCoord);
+        }
+
+    }
 }

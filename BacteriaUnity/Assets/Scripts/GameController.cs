@@ -16,29 +16,31 @@ namespace Assets.Scripts
         public Bacteria[] Bacterias { get { return FindObjectsOfType(typeof(Bacteria)) as Bacteria[]; } }
 
         public GameObject bacteria;
-        public GameObject alveolus;
+        public GameObject macrophage;
         public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 20, NumberOfBacteria = 100 };
 
         public int NumberOfBacteria;
+        public int NumberOfMacrophages;
 
         public void Start()
 		{
             Parameter.NumberOfBacteria = NumberOfBacteria;
+            Parameter.NumberOfMacrophages = NumberOfMacrophages;
 
-            Instantiate(alveolus);
+            Vector3 spawnPosition;
+            Quaternion spawnRotation = Quaternion.identity;
 
-            //for (int i = 0; i < mParameter.NumberOfMacrophages; i++)
-            //{
-            //	Macrophage m = new Macrophage(mParameter);
-            //	worldObjects.Add(m);
-            //}
+            for (int i = 0; i < Parameter.NumberOfMacrophages; i++)
+            {
+                spawnPosition = new Vector3(Random.Range(0, Width), Random.Range(0, Height), 0);
+                Instantiate(macrophage, spawnPosition, spawnRotation);
+            }
 
             for (int nb = 0; nb < Parameter.NumberOfBacteria; nb++)
 			{
                 var x = SampleGaussian(0, Width / 4);
                 var y = SampleGaussian(0, Height / 4);
-                Vector3 spawnPosition = new Vector3(x, y, 0);
-                Quaternion spawnRotation = Quaternion.identity;                
+                spawnPosition = new Vector3(x, y, 0);            
                 GameObject bact = Instantiate(bacteria, spawnPosition, spawnRotation);
                 bact.transform.parent = GameObject.FindGameObjectWithTag("Bacterias").transform;
             }

@@ -19,13 +19,13 @@ public class DebugText : MonoBehaviour {
         var spriteTransform = parent.transform;
         text = GetComponent<TextMesh>();
         var pos = spriteTransform.position;
-        text.text = string.Format("{0}", 0);
+        text.text = string.Format("Bact: {0}\nMacs: {1}", 0, 0);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
         Cell c = transform.parent.GetComponent<Cell>();
-        text.text = string.Format("{0}", c.BacteriaOnCell);
-	}
+        text.text = string.Format("Bact: {0}\nMacs: {1}", c.BacteriaOnCell, c.MacrophageOnCell.Count);
+    }
 }

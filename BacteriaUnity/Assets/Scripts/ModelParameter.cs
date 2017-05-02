@@ -32,7 +32,7 @@ namespace Assets.Scripts
 		public float BacteriaDoublingTime = 200F; // every 3.32 hours
 		public float ProbabilityInterchanged = 0.999F;
 		public int BacteriaSaturationNumber = 10;
-		public int MacrophageMovement = 2;
+		public float MacrophageMovement = 2F;
 		public float PhagocytosysRate = 0.048F;
 		public int MaximumBacteriaPerMacrophage = 50;
 		public int DistanceToSenseMetabolicGradient = 30;

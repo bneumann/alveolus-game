@@ -103,7 +103,6 @@ public class Alveolus : MonoBehaviour
     {
         while (true)
         {
-            //var ret = SetEquations();
             mCurrentCheConcentration = SolveEquations(mCurrentCheConcentration);
             var m = VectorToMatrix(mCurrentCheConcentration, mParameter.EpithelialCellsPerColumn);
             for (int row = 0; row < mParameter.EpithelialCellsPerRow; row++)
@@ -114,7 +113,7 @@ public class Alveolus : MonoBehaviour
                     go.GetComponent<Cell>().Chemokine = (float)m[row, col];
                 }
             }
-            //Debug.Log(mCurrentCheConcentration);
+            //Debug.Log(m);
             // Time for bacteria doubling is 200 Minutes while the Chemokine is recalculated every 5 minues. 
             // So the ration is 0.025 which we can deduct from the doubling time.
             yield return new WaitForSeconds(mParameter.BacteriaDoublingTime * 0.025F);
