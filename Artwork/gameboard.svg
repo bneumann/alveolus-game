@@ -2,6 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -19,6 +20,46 @@
    sodipodi:docname="gameboard.svg">
   <defs
      id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5070">
+      <stop
+         style="stop-color:#7570d6;stop-opacity:1"
+         offset="0"
+         id="stop5072" />
+      <stop
+         id="stop5078"
+         offset="0.66959691"
+         style="stop-color:#c4c8ea;stop-opacity:1" />
+      <stop
+         style="stop-color:#7e7bd8;stop-opacity:1"
+         offset="0.86059135"
+         id="stop5080" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0"
+         offset="1"
+         id="stop5074" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient5023">
+      <stop
+         style="stop-color:#9bf800;stop-opacity:0.69677418"
+         offset="0"
+         id="stop5025" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0.88064516"
+         offset="1"
+         id="stop5027" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient5017"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5019" />
+    </linearGradient>
     <inkscape:path-effect
        effect="bend_path"
        id="path-effect11882"
@@ -543,6 +584,36 @@
        is_visible="true"
        id="path-effect5702"
        effect="spiro" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5023"
+       id="linearGradient5029"
+       x1="249.38622"
+       y1="-64.797874"
+       x2="249.77689"
+       y2="69.55452"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5070"
+       id="radialGradient5076"
+       cx="-534.48572"
+       cy="716.33264"
+       fx="-534.48572"
+       fy="716.33264"
+       r="57.75"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(90.85715,-15.85714)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient5023"
+       id="linearGradient4303"
+       gradientUnits="userSpaceOnUse"
+       x1="249.38622"
+       y1="-64.797874"
+       x2="249.77689"
+       y2="69.55452"
+       gradientTransform="matrix(-1,0,0,1,1922.4812,-8.238496e-4)" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -551,11 +622,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="-188.79603"
-     inkscape:cy="673.09362"
+     inkscape:zoom="1.3978947"
+     inkscape:cx="1493.4612"
+     inkscape:cy="942.05582"
      inkscape:document-units="px"
-     inkscape:current-layer="g5217"
+     inkscape:current-layer="layer5"
      showgrid="true"
      units="px"
      inkscape:window-width="1920"
@@ -587,7 +658,8 @@
      inkscape:label="Cells"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,27.63781)">
+     transform="translate(0,27.63781)"
+     sodipodi:insensitive="true">
     <g
        id="g5217"
        transform="translate(-1001.2946,-259.99999)"
@@ -737,15 +809,6 @@
          xlink:href="#g10977"
          y="0"
          x="0" />
-      <circle
-         style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-         id="path4282"
-         cx="372.616"
-         cy="903.89795"
-         r="2.75"
-         inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bacteria.png"
-         inkscape:export-xdpi="78"
-         inkscape:export-ydpi="78" />
     </g>
     <g
        id="g11230"
@@ -879,7 +942,8 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Arteries"
-     style="opacity:0.75">
+     style="opacity:0.75"
+     sodipodi:insensitive="true">
     <path
        sodipodi:nodetypes="czzzzzc"
        inkscape:connector-curvature="0"
@@ -985,6 +1049,20 @@
   </g>
   <g
      inkscape:groupmode="layer"
+     id="layer6"
+     inkscape:label="Macrophage">
+    <circle
+       style="opacity:1;fill:url(#radialGradient5076);fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path5068"
+       cx="-443.6286"
+       cy="700.47546"
+       r="57.75"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\Macrophage.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Bacteria">
     <g
@@ -1050,5 +1128,96 @@
          d="m 799.03066,774.93393 c 95.12083,-36.58454 219.54084,174.72178 338.40104,91.92388"
          style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     </g>
+    <circle
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4282"
+       cx="-507.09659"
+       cy="601.18768"
+       r="2.75"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bacteria.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="GameBorders"
+     sodipodi:insensitive="true">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4283"
+       width="1869.9536"
+       height="1402.4651"
+       x="26.263966"
+       y="-79.655121" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="UI">
+    <path
+       style="opacity:1;fill:url(#linearGradient5029);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 26.263672,-79.654297 0,100 421.931638,0 0.3125,0 0,-0.01172 c 27.48755,-0.1718 49.68159,-22.5001942 49.6875,-49.988281 -0.008,-27.486563 0.31505,-49.479299 0.31505,-49.479299 0,0 -331.50544,-0.520702 -472.246688,-0.5207 z"
+       id="rect4286"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactCountImage.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
+    <circle
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.31818199;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4282-5"
+       cx="77.781746"
+       cy="-52.993763"
+       r="10.25"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactCountIcon.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
+    <ellipse
+       inkscape:export-ydpi="78"
+       inkscape:export-xdpi="78"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactCountIcon.png"
+       cy="-24.958048"
+       cx="63.496029"
+       id="circle5061"
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:8.18020725;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       rx="9.1785717"
+       ry="8.8214283" />
+    <circle
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:9.31818199;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle5063"
+       cx="94.388885"
+       cy="-4.9580474"
+       r="10.25"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactCountIcon.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
+    <circle
+       inkscape:export-ydpi="78"
+       inkscape:export-xdpi="78"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactCountIcon.png"
+       r="13.107142"
+       cy="-43.529476"
+       cx="110.63889"
+       id="circle5065"
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:11.91558456;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <path
+       inkscape:export-ydpi="78"
+       inkscape:export-xdpi="78"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactDoublingImage.png"
+       sodipodi:nodetypes="cccccccc"
+       inkscape:connector-curvature="0"
+       id="path4301"
+       d="m 1896.2176,-79.655121 0,100 -421.9317,0 -0.3125,0 0,-0.01172 c -27.4875,-0.1718 -49.6816,-22.500194 -49.6875,-49.988281 0.01,-27.486563 -0.315,-49.479299 -0.315,-49.479299 0,0 331.5054,-0.520702 472.2467,-0.5207 z"
+       style="opacity:1;fill:url(#linearGradient4303);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <path
+       style="opacity:1;fill:#fbff63;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 1799.46,-53.456784 c -10.3124,-2.03e-4 -18.6722,8.359679 -18.672,18.672043 0,10.311276 8.3607,18.669462 18.672,18.669259 7.2772,-0.0089 14.9656,-8.544211 17.1045,-13.183346 2.1389,4.639102 6.7783,7.612825 11.8867,7.61914 7.2383,1.43e-4 13.1065,-5.867146 13.1074,-13.105468 2e-4,-7.239085 -5.8683,-13.107564 -13.1074,-13.107422 -5.1084,0.0063 -9.7478,2.980038 -11.8867,7.61914 -2.1389,-4.639135 -9.8273,-13.174405 -17.1045,-13.183346 z"
+       id="circle5065-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:export-filename="C:\Users\benni\Documents\bacteria\BacteriaUnity\Assets\Sprites\bactDoubling.png"
+       inkscape:export-xdpi="78"
+       inkscape:export-ydpi="78" />
   </g>
 </svg>

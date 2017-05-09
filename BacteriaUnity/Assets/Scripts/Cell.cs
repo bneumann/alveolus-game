@@ -12,6 +12,7 @@ namespace Assets.Scripts
         private ParticleSystem mChemokineEmitter;
 
         public float ChemokineLevels = 0F; // This is only a display in the unity UI
+        public bool DebugInformation = false;
         private float mChemokine = 0F;
 
         public int BacteriaOnCell;

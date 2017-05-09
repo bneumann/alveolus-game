@@ -7,9 +7,10 @@ public class DebugText : MonoBehaviour {
 
     // Use this for initialization
     TextMesh text;
-
+    Cell cell;
     void Start () {
         var parent = transform.parent;
+        cell = transform.parent.GetComponent<Cell>();
 
         var parentRenderer = parent.GetComponent<Renderer>();
         var renderer = GetComponent<Renderer>();
@@ -19,13 +20,21 @@ public class DebugText : MonoBehaviour {
         var spriteTransform = parent.transform;
         text = GetComponent<TextMesh>();
         var pos = spriteTransform.position;
-        text.text = string.Format("Bact: {0}\nMacs: {1}", 0, 0);
+        text.text = "";
+        if (cell.DebugInformation)
+        {
+            text.text = string.Format("Bact: {0}\nMacs: {1}", 0, 0);
+        }
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        Cell c = transform.parent.GetComponent<Cell>();
-        text.text = string.Format("Bact: {0}\nMacs: {1}", c.BacteriaOnCell, c.MacrophageOnCell.Count);
+
+        if (cell.DebugInformation)
+        {
+            text.text = string.Format("Bact: {0}\nMacs: {1}", cell.BacteriaOnCell, cell.MacrophageOnCell.Count);
+        }
+        
     }
 }

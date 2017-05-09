@@ -7,29 +7,57 @@ namespace Assets.Scripts
 {
 	public class Macrophage : MonoBehaviour
 	{
-		//private int mEatenBacteria = 0;
-		// Biological parameters for macrophages
-		//int macsiz = 10; // Macrophage size in micras (21 microm of diameter, from Wikipedia)
+        // Model parameter
+        ModelParameter mParameter;
+        private Rigidbody2D mRigidBody;
+        // Eaten bacteria
+        private int mBacteriaEaten = 0;
+
+        public float X { get { return transform.position.x; } }
+        public float Y { get { return transform.position.y; } }
+		// Biological parameters for macrophages		
         private Vector2 mDirection = Vector2.one;
         private GameObject target;
+        public Vector2 velocity;
 
+        /// <summary>
+        /// Movement states the macrophage can be in
+        /// </summary>
         enum MovementStates
         {
-            Idle,            // If not sensing chemokine or bacterias are close, we can idle around doing macrophagy things
-            ChemokineFound,  // Somethings wrong in the neighbourhood, we should check it out
-            BaceriaInRange   // EXTERMINATE!!! EXTERMINAAAAATTTE!!!
+            /// <summary>If not sensing chemokine or bacterias are close, we can idle around doing macrophagy things</summary>
+            Idle,
+            ///<summary>Somethings wrong in the neighbourhood, we should check it out</summary> 
+            ChemokineFound,
+            ///<summary>EXTERMINATE!!! EXTERMINAAAAATTTE!!!</summary> 
+            BaceriaInRange
         }
 
+        /// <summary>
+        /// Current movement state
+        /// </summary>
         private MovementStates movementState = MovementStates.Idle;
+        /// <summary>
+        /// Last movement state
+        /// </summary>
         private MovementStates lastMovementState = MovementStates.Idle;
 
+        /// <summary>
+        /// The last state will always be remembered in lastMovementState
+        /// </summary>
+        /// <seealso cref="lastMovementState"/>
         private MovementStates MovementState
         {
             get { return movementState; }
             set { if (value != movementState) { lastMovementState = movementState; movementState = value; } }
         }
 
-        private int mBacteriaNear = 0; // Internal state. Don't touch
+        // Internal state. Don't touch
+        private int mBacteriaNear = 0;
+
+        /// <summary>
+        /// Number of bacteria in range
+        /// </summary>
         private int BacteriaNear
         {
             set
@@ -50,13 +78,6 @@ namespace Assets.Scripts
             }
         } // Counter for close bacterias. Also sets the state to exterminate!!!
 
-        ModelParameter mParameter;
-        private Rigidbody2D mRigidBody;
-        private int mBacteriaEaten = 0;
-
-        public float X { get { return transform.position.x; } }
-        public float Y { get { return transform.position.y; } }
-
         public void Start()
         {
             GameController gc = GameObject.Find("GameController").GetComponent<GameController>();
@@ -66,7 +87,6 @@ namespace Assets.Scripts
             {
                 Debug.LogError("No rigidBody attached!");
             }
-            //clebac = mParameter.PhagocytosysRate; // Phagocytosys rate (min-1, calculated in Excel parameters calculation.xlsx (sheet: Phagocytosys rate) [[PMC266186]])
             StartCoroutine(NewHeadingCoroutine());
         }
 
@@ -75,7 +95,6 @@ namespace Assets.Scripts
         /// </summary>
         private void SetNewHeading()
         {
-            Debug.Log(movementState.ToString() + " " + BacteriaNear);
             switch (movementState)
             {
                 case MovementStates.Idle:
@@ -103,6 +122,10 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// New heading coroutine. Will generate a new heading every 3 seconds if in idle state and every 100ms in agitated state
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator NewHeadingCoroutine()
         {
             while (true)
@@ -111,7 +134,7 @@ namespace Assets.Scripts
                 yield return new WaitForSeconds(movementState == MovementStates.Idle ? 3F : 0.1F);
             }
         }
-        public Vector2 velocity;
+
         public void FixedUpdate()
         {
             PlayerMovementClamping();
@@ -135,6 +158,13 @@ namespace Assets.Scripts
             }
         }
 
+        /// <summary>
+        /// Get all objects with a tag of type T within the radius
+        /// </summary>
+        /// <typeparam name="T">Object type to be returned</typeparam>
+        /// <param name="tag">Tag of the object</param>
+        /// <param name="radius">Radius to search for</param>
+        /// <returns>List of T</returns>
         List<T> GetObjectsAround<T>(string tag, float radius)
         {
             return GameObject.FindGameObjectsWithTag(tag)
@@ -161,26 +191,18 @@ namespace Assets.Scripts
         {
             if(e.gameObject.name.Contains("Bacteria"))
             {
-                var bac = e.gameObject.GetComponent<Bacteria>();
-                var distToBact = Vector2.Distance(transform.position, e.transform.position);
-                var macBounds = 0.7F;
-                if (distToBact < macBounds)
-                {
-                    BacteriaNear--;
-                    Destroy(e.gameObject);
-                    mBacteriaEaten++;
-                    Debug.Log("Bacteria exterminated");
-                    return;
-                }
                 BacteriaNear++;
             }
         }
 
+        /// <summary>
+        /// Checks permanently for any objects inside the hit area
+        /// </summary>
+        /// <param name="e">other object</param>
         private void OnTriggerStay2D(Collider2D e)
         {
             if (e.gameObject.name.Contains("Bacteria"))
             {
-                var bac = e.gameObject.GetComponent<Bacteria>();
                 var distToBact = Vector2.Distance(transform.position, e.transform.position);
                 var macBounds = 0.7F;
                 if (distToBact < macBounds)
@@ -198,7 +220,6 @@ namespace Assets.Scripts
         {
             if (e.gameObject.name.Contains("Bacteria"))
             {
-                var bac = e.gameObject.GetComponent<Bacteria>();
                 BacteriaNear--;
             }
         }

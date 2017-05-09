@@ -1,53 +1,38 @@
 ﻿using System.Collections;
-using System.Linq;
 using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using Assets.Scripts;
-using System.Collections.Generic;
 
 public class Alveolus : MonoBehaviour
 {
-    private ModelParameter mParameter;
-
-    private Matrix<double> CellMatrix;
+    // Shared model parameter
+    private ModelParameter mParameter; 
+    // Vector of current chemokine concentration.
     private Vector<double> mCurrentCheConcentration;
 
+    // Parameters definable in Unity
     // Object used for generating the tile map
     public GameObject cell;
-
-    //Size you want your tile in unity units
+    // Size you want your tile in unity units
     public float cellTileWidth = 1.5F;
     public float cellTileHeight = 1.11F;
-
-    //Tilemap width and height
+    // Tilemap width and height
     public int cellHorizontalCount = 13;
     public int cellVerticalCount = 9;
 
-    // Cell Model for chemokine generation
-    //global contador matBac
-    //contador = contador + 1; %Count the iterations
-    //%Parameters
-    //x(x< 1e-6) = 0;
-    //R           = cel* N; %Total length of surface, microm
-    //dx          = R/N; %Thickness of each layer microm
-    //NN = N * N; %Number of cells
-    //X1 = vec2mat(x(1:NN), N)';
-    //k1          = 4e-4; %Abitrary parameter
-    //k2          = 1e3; %Abitrary parameter
-    //Di          = 6e3* pars(3); %Abitrary parameter
+    // Cell parameters
+    // Complete surface in micron (x-y-area)
     private float SurfaceLength { get { return mParameter.EpithelialCellWidth * mParameter.EpithelialCellsPerRow; } }
+    // Thickness of cell layer (z-Dimension)
     private float CellLayerThickness { get { return SurfaceLength / mParameter.EpithelialCellsPerRow; } }
-    private int NumberOfCells { get { return mParameter.EpithelialCellsPerRow * mParameter.EpithelialCellsPerRow; } }
 
+    // Arbitrary model parameter
     private const float k1 = 4e-4F; // Arbitrary parameter
     private const float k2 = 1e3F; // Arbitrary parameter
     private float Di { get { return mParameter.ChemokineDiffusionConstant; } }
 
-    //2D array to hold all tiles, which makes it easier to reference adjacent tiles etc.
-    public GameObject[,] map;
-
-    private Matrix<double> mBactCountMatrix;
-    private List<Matrix<double>> mChemokine;
+    // 2D array to hold all cells, which makes it easier to reference adjacent tiles etc.
+    public GameObject[,] cellMap;
 
     private float mTimeStep = 0F;
 
@@ -64,14 +49,12 @@ public class Alveolus : MonoBehaviour
         // Overwrite parameter from unity to match screen
         mParameter.EpithelialCellsPerRow = cellHorizontalCount;
         mParameter.EpithelialCellsPerColumn = cellVerticalCount;
-
-        CellMatrix = Matrix<double>.Build.Dense(mParameter.EpithelialCellsPerRow, mParameter.EpithelialCellsPerColumn, 0);
+        
+        // Initializing chemokine concentration to 0
         mCurrentCheConcentration = Vector<double>.Build.Dense(mParameter.EpithelialCellsPerRow * mParameter.EpithelialCellsPerColumn, 0);
-        mChemokine = new List<Matrix<double>>();
 
-        //TODO: Also move to Alveolus class
         //Initialize our 2D Transform array with the width and height
-        map = new GameObject[cellHorizontalCount, cellVerticalCount];
+        cellMap = new GameObject[cellHorizontalCount, cellVerticalCount];
 
         //Iterate over each future tile positions for x and y
         for (int y = 0; y < cellVerticalCount; y++)
@@ -86,11 +69,9 @@ public class Alveolus : MonoBehaviour
                 //Set the tiles parent to the GameObject this script is attached to
                 tile.parent = transform;
                 //Set the 2D map array element to the current tile that we just created.
-                map[x, y] = tile.gameObject;
+                cellMap[x, y] = tile.gameObject;
             }
-        }
-
-        mBactCountMatrix = Matrix<double>.Build.Dense(mParameter.EpithelialCellsPerRow, mParameter.EpithelialCellsPerColumn);
+        }        
 
         StartCoroutine(CalculateChemokine());
     }
@@ -99,6 +80,9 @@ public class Alveolus : MonoBehaviour
 	void Update () {
     }
 
+    /// <summary>
+    /// Coroutine that calculates the chemokine concentration and updates the cells
+    /// </summary>
     IEnumerator CalculateChemokine()
     {
         while (true)
@@ -109,7 +93,7 @@ public class Alveolus : MonoBehaviour
             {
                 for (int col = 0; col < mParameter.EpithelialCellsPerColumn; col++)
                 {
-                    GameObject go = map[row, col];
+                    GameObject go = cellMap[row, col];
                     go.GetComponent<Cell>().Chemokine = (float)m[row, col];
                 }
             }
@@ -120,6 +104,11 @@ public class Alveolus : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Solve the equations given by the model using RungaKutta 4th order ODE solver.
+    /// </summary>
+    /// <param name="initials">Vector of initial values y0</param>
+    /// <returns>Initals for the next step. Current chemokine concentration</returns>
     private Vector<double> SolveEquations(Vector<double> initials)
     {
         // Integrating over max of 10 hours. Step is 5 minutes
@@ -138,19 +127,28 @@ public class Alveolus : MonoBehaviour
         return initials;
     }
 
-    //%Spatial model
-    // zero = zeros(1, N);
-    // % 1. Fluxes in x-direction; zero fluxes near boundaries
-    // FI = -Di.*[zero;X1(2:N,:) - X1(1:N-1,:); zero]./dx;
-    // % Add flux gradient to rate of change
-    // dI = (FI(2:N + 1,:) - FI(1:N,:))./ dx;
-    // % 2. Fluxes in y-direction; zero fluxes near boundaries
-    // FI = -Di.*[zero',X1(:,2:N) - X1(:,1:N-1),zero']./dx;
-    // % Add flux gradient to rate of change
-    // dI = -dI - (FI(:, 2:N + 1) - FI(:, 1:N))./ dx;
-    //%%
-    //dxX = k1.* matBac.*pars(4) - k2.* X1.^2 + dI;
-    //dfx = dxX(:); %Me ge equations
+    ///<summary> 
+    /// Equatiosn for the spatial cell model (MATLAB code)
+    ///</summary>
+    ///<remarks>
+    ///  zero = zeros(1, N);
+    ///  % 1. Fluxes in x-direction; zero fluxes near boundaries
+    ///  FI = -Di.*[zero;X1(2:N,:) - X1(1:N-1,:); zero]./dx;
+    ///  % Add flux gradient to rate of change
+    ///  dI = (FI(2:N + 1,:) - FI(1:N,:))./ dx;
+    ///  % 2. Fluxes in y-direction; zero fluxes near boundaries
+    ///  FI = -Di.*[zero',X1(:,2:N) - X1(:,1:N-1),zero']./dx;
+    ///  % Add flux gradient to rate of change
+    ///  dI = -dI - (FI(:, 2:N + 1) - FI(:, 1:N))./ dx;
+    /// %%
+    /// dxX = k1.* matBac.*pars(4) - k2.* X1.^2 + dI;
+    /// dfx = dxX(:); %Merge equations
+    ///</remarks>
+    ///<param name="initials">Vector of initial values y0</param>
+    ///<param name="tspan">Not used at the moment</param>
+    ///<returns>
+    ///Solved values for each time step
+    ///</returns>
     private Vector<double> SetEquations(double tspan, Vector<double> initials)
     {
         initials.Map(x => x < 1e-6 ? 0 : x);
@@ -173,13 +171,10 @@ public class Alveolus : MonoBehaviour
         FI = zero.Append(diff);
         FI = -Di * FI.Append(zero) / CellLayerThickness;
         // Add flux gradient to rate of change
-        //  dI = -dI - (FI(:, 2:N + 1) - FI(:, 1:N))./ dx;
         dI = -dI - (FI.SubMatrix(0, FI.RowCount, 1, cols) - FI.SubMatrix(0, FI.RowCount, 0, cols)) / CellLayerThickness;
         var dxX = k1 * BactCount.Transpose() * mParameter.AntigenPerBacteria - k2 * X1.PointwiseMultiply(X1) + dI;
-        //Debug.Log(FI);
-        //Debug.Log(dI);
-        //Debug.Log(dxX);
-
+        
+        // Merge equations into a vector
         var ret = Vector<double>.Build.Dense(rows * cols);
         for(int i = 0; i < dxX.ColumnCount; i++)
         {
@@ -189,10 +184,16 @@ public class Alveolus : MonoBehaviour
         return ret;
     }
 
+    /// <summary>
+    /// Convert a vector to a matrix given the numbers of colums. 
+    /// This is equivalent to MATLABs vec2mat. The remainder will be padded with zeros.
+    /// </summary>
+    /// <param name="vector">Vector of values</param>
+    /// <param name="columns">Number of columns in the matrix</param>
+    /// <returns></returns>
     private Matrix<double> VectorToMatrix(Vector<double> vector, int columns)
     {
         var rem = vector.Count % columns;
-        var padding = columns - rem;
         var rows = Mathf.FloorToInt(vector.Count / columns);
         // If the last row is incomplete we will pad it with zeros
         rows += rem > 0 ? 1 : 0;
@@ -209,18 +210,21 @@ public class Alveolus : MonoBehaviour
         return ret;
     }
 
-    private Matrix<double> BactCount {
+    // Matrix that holds the number of bacteria on every cell.
+    private Matrix<double> BactCount
+    {
         get
         {
-            for (int row = 0; row < mBactCountMatrix.RowCount; row++)
+            Matrix <double> ret = Matrix<double>.Build.Dense(mParameter.EpithelialCellsPerRow, mParameter.EpithelialCellsPerColumn);
+            for (int row = 0; row < ret.RowCount; row++)
             {
-                for (int col = 0; col < mBactCountMatrix.ColumnCount; col++)
+                for (int col = 0; col < ret.ColumnCount; col++)
                 {
-                    Cell curCell = map[row, col].GetComponent<Cell>();
-                    mBactCountMatrix[row, col] = curCell.BacteriaOnCell;
+                    Cell curCell = cellMap[row, col].GetComponent<Cell>();
+                    ret[row, col] = curCell.BacteriaOnCell;
                 }
             }
-            return mBactCountMatrix;
+            return ret;
         }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using UnityEngine;
-using MathNet.Numerics.LinearAlgebra;
+using UnityEngine.UI;
+using System.Linq;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// This is the main controller in the game. It creates all actors and holds the basic logic.
+    /// </summary>
     public class GameController : MonoBehaviour
-	{
+    {
         public Vector3 ScreenSize { get { return new Vector3(Screen.width, Screen.height, 0); } }
 
 		public float Width { get { return Camera.main.ScreenToWorldPoint(ScreenSize).x; } }
@@ -17,16 +21,27 @@ namespace Assets.Scripts
 
         public GameObject bacteria;
         public GameObject macrophage;
-        public ModelParameter Parameter = new ModelParameter() { /*EpithelialCellsPerRow = 40,*/ BacteriaDoublingTime = 20, NumberOfBacteria = 100 };
+        public ModelParameter Parameter = new ModelParameter() { BacteriaDoublingTime = 20, NumberOfBacteria = 100 };
 
         public int NumberOfBacteria;
         public int NumberOfMacrophages;
 
+        private const float mCoughProbability = 0.995F;
+
+        private Text uiBacteriaCounter;
+        private Text uiBacteriaDoublingTime;
+        
         public void Start()
 		{
+            // Overwrite some model parameters from Unity UI
             Parameter.NumberOfBacteria = NumberOfBacteria;
             Parameter.NumberOfMacrophages = NumberOfMacrophages;
 
+            // Find our game UI
+            uiBacteriaCounter = GameObject.Find("CountText").GetComponent<Text>();
+            uiBacteriaDoublingTime = GameObject.Find("DoublingText").GetComponent<Text>();
+
+            // Initialize our actors
             Vector3 spawnPosition;
             Quaternion spawnRotation = Quaternion.identity;
 
@@ -38,13 +53,14 @@ namespace Assets.Scripts
 
             for (int nb = 0; nb < Parameter.NumberOfBacteria; nb++)
 			{
-                var x = SampleGaussian(0, Width / 4);
-                var y = SampleGaussian(0, Height / 4);
+                var x = GaussianRandom(0, Width / 4);
+                var y = GaussianRandom(0, Height / 4);
                 spawnPosition = new Vector3(x, y, 0);            
                 GameObject bact = Instantiate(bacteria, spawnPosition, spawnRotation);
                 bact.transform.parent = GameObject.FindGameObjectWithTag("Bacterias").transform;
             }
 
+            // This triggers the doubling timer for the bacteria
 			StartCoroutine(DoubleBacteria());
         }
 
@@ -54,6 +70,41 @@ namespace Assets.Scripts
             {
                 Application.Quit();
             }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                Cough();
+            }
+            if (Input.GetKeyDown(KeyCode.K))
+            {
+                KillAll();
+            }
+            // Show UI information
+            uiBacteriaDoublingTime.text = Mathf.RoundToInt(Parameter.BacteriaDoublingTime - Time.realtimeSinceStartup % Parameter.BacteriaDoublingTime).ToString();
+            uiBacteriaCounter.text = BacteriaCount.ToString();
+        }
+
+        /// <summary>
+        /// Remove some bacteria from the alveolus through coughing
+        /// </summary>
+        public void Cough()
+        {
+            // Get all bacteria in flowing state
+            var bactList = GameObject.FindObjectsOfType<Bacteria>().Where(b => b.State == Bacteria.MovementStates.FlowingState).ToList();
+            Debug.Log(bactList.Count + " bacteria found");
+            // Remove some of them according to propability
+            for(int b = 0; b < bactList.Count; b++)
+            {
+                if(Random.Range(0F, 1F) > mCoughProbability)
+                {
+                    Destroy(bactList[b].gameObject);
+                }
+            }
+        }
+
+        public void KillAll()
+        {
+            var bactList = GameObject.FindObjectsOfType<Bacteria>().ToList();
+            bactList.ForEach(b => Destroy(b.gameObject));
         }
 
         /// <summary>
@@ -77,10 +128,14 @@ namespace Assets.Scripts
 			}
 		}
 
-        private static float SampleGaussian(float mean, float stddev)
-        {
-            // The method requires sampling from a uniform random of (0,1]
-            // but Random.NextDouble() returns a sample of [0,1).
+        /// <summary>
+        /// Helper function to generate gaussian distributed random values
+        /// </summary>
+        /// <param name="mean">Mean value</param>
+        /// <param name="stddev">Standard deviation</param>
+        /// <returns></returns>
+        private static float GaussianRandom(float mean = 0, float stddev = 1)
+        {            
             float x1 = 1 - Random.Range(0F, 1F);
             float x2 = 1 - Random.Range(0F, 1F);
 

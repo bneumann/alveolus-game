@@ -8,7 +8,6 @@ namespace Assets.Scripts
 	{
 		private MovementStates mMovementState = MovementStates.SessileState;
         private ModelParameter mParameter;
-        private Vector3 Dimension;
 
         // Individual bacteria are between 0.5 and 1.25 micrometers in diameter. From: https://microbewiki.kenyon.edu/index.php/Streptococcus_pneumoniae
         // So we take 1 roughly as guideline
@@ -46,7 +45,6 @@ namespace Assets.Scripts
         {
             GameController gc = GameObject.Find("GameController").GetComponent<GameController>();
             mParameter = gc.Parameter;
-            Dimension = new Vector3(gc.Width, gc.Height);
 
             StartCoroutine(NewHeadingCoroutine());
         }
