@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
 {
@@ -30,9 +31,52 @@ namespace Assets.Scripts
 
         private Text uiBacteriaCounter;
         private Text uiBacteriaDoublingTime;
-        
-        public void Start()
-		{
+        private float mStartTime;
+        private static GameController instance;
+        private bool mMainSceneLoaded = false;
+
+        void Awake()
+        {
+            //Check if instance already exists
+            if (instance == null)
+            {
+                //if not, set instance to this
+                instance = this;
+            }
+            //If instance already exists and it's not this:
+            else if (instance != this)
+            {
+                //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+                Destroy(gameObject);
+            }
+
+            //Sets this to not be destroyed when reloading scene
+            DontDestroyOnLoad(gameObject);
+
+            SceneManager.sceneLoaded += this.OnLoadCallback;
+        }
+
+        void Start()
+        {
+           
+        }
+
+        private void OnLoadCallback(Scene scene, LoadSceneMode sceneMode)
+        {
+            Debug.Log(scene.name);
+            if(scene.name == "MainScene")
+            {
+                InitGame();
+                mMainSceneLoaded = true;
+            }
+            else
+            {                
+                mMainSceneLoaded = false;
+            }
+        }
+
+        void InitGame()
+        {
             // Overwrite some model parameters from Unity UI
             Parameter.NumberOfBacteria = NumberOfBacteria;
             Parameter.NumberOfMacrophages = NumberOfMacrophages;
@@ -52,24 +96,21 @@ namespace Assets.Scripts
             }
 
             for (int nb = 0; nb < Parameter.NumberOfBacteria; nb++)
-			{
+            {
                 var x = GaussianRandom(0, Width / 4);
                 var y = GaussianRandom(0, Height / 4);
-                spawnPosition = new Vector3(x, y, 0);            
+                spawnPosition = new Vector3(x, y, 0);
                 GameObject bact = Instantiate(bacteria, spawnPosition, spawnRotation);
                 bact.transform.parent = GameObject.FindGameObjectWithTag("Bacterias").transform;
             }
 
             // This triggers the doubling timer for the bacteria
-			StartCoroutine(DoubleBacteria());
+            mStartTime = Time.realtimeSinceStartup;
+            StartCoroutine(DoubleBacteria());
         }
 
-		public void Update()
+        void Update()
 		{
-            if(Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
             if (Input.GetKeyDown(KeyCode.C))
             {
                 Cough();
@@ -78,15 +119,24 @@ namespace Assets.Scripts
             {
                 KillAll();
             }
-            // Show UI information
-            uiBacteriaDoublingTime.text = Mathf.RoundToInt(Parameter.BacteriaDoublingTime - Time.realtimeSinceStartup % Parameter.BacteriaDoublingTime).ToString();
-            uiBacteriaCounter.text = BacteriaCount.ToString();
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                StopAllCoroutines();
+                SceneManager.LoadScene("MainMenu");
+            }
+
+            if(mMainSceneLoaded)
+            {
+                // Show UI information
+                uiBacteriaDoublingTime.text = Mathf.RoundToInt(Parameter.BacteriaDoublingTime - (Time.realtimeSinceStartup - mStartTime) % Parameter.BacteriaDoublingTime).ToString();
+                uiBacteriaCounter.text = BacteriaCount.ToString();
+            }
         }
 
         /// <summary>
         /// Remove some bacteria from the alveolus through coughing
         /// </summary>
-        public void Cough()
+        void Cough()
         {
             // Get all bacteria in flowing state
             var bactList = GameObject.FindObjectsOfType<Bacteria>().Where(b => b.State == Bacteria.MovementStates.FlowingState).ToList();
@@ -101,7 +151,7 @@ namespace Assets.Scripts
             }
         }
 
-        public void KillAll()
+        void KillAll()
         {
             var bactList = GameObject.FindObjectsOfType<Bacteria>().ToList();
             bactList.ForEach(b => Destroy(b.gameObject));
