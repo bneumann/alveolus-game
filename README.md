@@ -8,7 +8,7 @@ This project is a adaption of Dr. Guido Santos MATLAB implementation of a bacter
 # Build
 Open the BacteriaUnity folder in Unity and run from there
 
-#Screenshots
+# Screenshots
 
 ![Main Menu](Artwork/screenshot_menu.jpg)
 __Main menu__
